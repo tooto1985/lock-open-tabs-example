@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.11/vue.js'></script>
+</head>
+<body>
+    <div id="app">
+        <input type="button" :value="btnValue" @click="openWindow" :disabled="!status">
+    </div>
+    <script>
+        var vm = new Vue({
+            el: '#app',
+            computed: {
+                btnValue() {
+                    return this.status ? '開啟' : '鎖定'
+                }
+            },
+            data() {
+                return {
+                    status: true,
+                    lastTick: null,
+                    sid: null
+                }
+            },
+            methods: {
+                openWindow() {
+                    this.status = !this.status;
+                    window.open('open.html', '_blank');
+                    this.sid = setInterval(() => {
+                        this.checkAlive()
+                    }, 6000);
+                },
+                checkAlive(tick) {
+                    console.log(tick);
+                    if (tick) {
+                        this.lastTick = tick;
+                    } else {
+                        if (this.lastTick) {
+                            if (Date.now() - this.lastTick > 6000) {
+                                this.status = true;
+                                clearInterval(this.sid);
+                            }
+                        }
+                    }
+                }
+            }
+        })
+    </script>
+
+</body>
+</html>
